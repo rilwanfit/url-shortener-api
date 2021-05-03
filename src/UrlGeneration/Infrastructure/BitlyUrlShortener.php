@@ -14,7 +14,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 final class BitlyUrlShortener implements UrlShortener
 {
     public const BITLY_DOMAIN = 'https://api-ssl.bitly.com/';
-    public const SHORT_URL_DOMAIN = 'vonq.io';
+    public const SHORT_URL_DOMAIN = 'bit.ly';
     public const TIMEOUT = 5;
 
     private string $token;
@@ -23,9 +23,9 @@ final class BitlyUrlShortener implements UrlShortener
 
     private LoggerInterface $logger;
 
-    public function __construct($token, HttpClientInterface $httpClient, LoggerInterface $logger)
+    public function __construct(string $bitlyToken, HttpClientInterface $httpClient, LoggerInterface $logger)
     {
-        $this->token = $token;
+        $this->token = $bitlyToken;
         $this->httpClient = $httpClient;
         $this->logger = $logger;
     }
@@ -81,7 +81,7 @@ final class BitlyUrlShortener implements UrlShortener
 
     private function decodePayload(ResponseInterface $response): string
     {
-        $content = json_decode($response->getBody()->getContents());
+        $content = json_decode($response->getContent());
 
         if ($content === null) {
             return '';

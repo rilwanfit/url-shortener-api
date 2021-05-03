@@ -12,6 +12,9 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $projectDir: '%kernel.project_dir%'
+            $bitlyUrlShortener: '@App\UrlGeneration\Infrastructure\BitlyUrlShortener'
+            $ownUrlShortener: '@App\UrlGeneration\Infrastructure\SimpleUrlShortener'
+            $bitlyToken: '%env(BITLY_TOKEN)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -33,3 +36,18 @@ services:
     # please note that last definitions always *replace* previous ones
 
     App\UrlGeneration\Domain\UrlShortener: '@App\UrlGeneration\Infrastructure\SimpleUrlShortener'
+
+    Travaux\VariantRetriever\Retriever\VariantRetrieverInterface:
+        class: Travaux\VariantRetriever\Retriever\VariantRetriever
+        calls:
+            - addExperiment:
+                  - !service
+                      class: Travaux\VariantRetriever\ValueObject\Experiment
+                      arguments:
+                          - 'shortening-url-experiment'
+                          - !service
+                              class: Travaux\VariantRetriever\ValueObject\Variant
+                              arguments: [ 'control', 30 ]
+                          - !service
+                              class: Travaux\VariantRetriever\ValueObject\Variant
+                              arguments: [ 'variant', 70 ]

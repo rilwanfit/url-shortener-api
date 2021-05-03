@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11418c069a249895c30a238a2bc25e5d",
+    "content-hash": "0970871fe3d98fb74c6ebff496177c48",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -5037,6 +5037,51 @@
                 }
             ],
             "time": "2021-04-29T20:47:09+00:00"
+        },
+        {
+            "name": "travaux-com/variantretriever",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/travaux-com/VariantRetriever.git",
+                "reference": "83a7f71b2ec280f0d93b4175758f9a6a822179b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/travaux-com/VariantRetriever/zipball/83a7f71b2ec280f0d93b4175758f9a6a822179b8",
+                "reference": "83a7f71b2ec280f0d93b4175758f9a6a822179b8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "pestphp/pest": "^0.2.4",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Travaux\\VariantRetriever\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas P",
+                    "email": "thomas.perez@travaux.com"
+                }
+            ],
+            "homepage": "https://github.com/travaux-com/variantretriever",
+            "support": {
+                "issues": "https://github.com/travaux-com/VariantRetriever/issues",
+                "source": "https://github.com/travaux-com/VariantRetriever/tree/1.0.3"
+            },
+            "time": "2020-11-09T11:06:18+00:00"
         }
     ],
     "packages-dev": [

@@ -8,29 +8,34 @@ use App\UrlGeneration\Domain\ShorteningUrlRequest;
 use App\UrlGeneration\Domain\UrlRepository;
 use App\UrlGeneration\Domain\UrlShortener;
 use DateTime;
+use Travaux\VariantRetriever\Retriever\VariantRetrieverInterface;
+use Travaux\VariantRetriever\ValueObject\Experiment;
 
 class UrlGeneration
 {
     private UrlRepository $urlRepository;
 
-    private UrlShortener $shortener;
+    private UrlShortener $bitlyUrlShortener;
 
-    public function __construct(UrlRepository $urlRepository, UrlShortener $shortener)
+    private UrlShortener $ownUrlShortener;
+
+    private VariantRetrieverInterface $variantRetriever;
+
+    public function __construct(UrlRepository $urlRepository, UrlShortener $bitlyUrlShortener, UrlShortener $ownUrlShortener, VariantRetrieverInterface $variantRetriever)
     {
         $this->urlRepository = $urlRepository;
-        $this->shortener = $shortener;
+        $this->bitlyUrlShortener = $bitlyUrlShortener;
+        $this->ownUrlShortener = $ownUrlShortener;
+        $this->variantRetriever = $variantRetriever;
     }
 
     public function generate(ShorteningUrlRequest $request): ShorteningUrl
     {
         $shorteningUrl = $this->urlRepository->findByUrlRequest($request);
-
         if ($shorteningUrl === null) {
-            $generatedUrl = $this->shortener->shorten($request->targetUrl());
-
             $shorteningUrl = new ShorteningUrl(
                 $request->targetUrl(),
-                $generatedUrl,
+                $this->generateUrl($request->targetUrl()),
                 $request->uniqueHash()
             );
 
@@ -43,5 +48,25 @@ class UrlGeneration
     public function currentTime(): DateTime
     {
         return new DateTime('now');
+    }
+
+    private function generateUrl(string $targetUrl): string
+    {
+        $affectedVariant = $this->variantRetriever
+            ->getVariantForExperiment(
+                new Experiment('shortening-url-experiment'),
+                $this->getUserId()
+            );
+
+        if ((string) $affectedVariant === 'control') {
+            return $this->bitlyUrlShortener->shorten($targetUrl);
+        }
+
+        return $this->ownUrlShortener->shorten($targetUrl);
+    }
+
+    private function getUserId(): string
+    {
+        return (string) bin2hex(random_bytes(16));
     }
 }
